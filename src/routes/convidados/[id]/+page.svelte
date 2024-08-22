@@ -1,53 +1,43 @@
 <script lang="ts">
-	//import { findUser } from '$lib/db';
+	import { inviteStore } from '$lib/store.svelte';
 	import { onMount } from 'svelte';
 
 	let showExtraInfo = $state(false);
+	let showSuccessMessage = $state(false);
+	let { form, data } = $props();
 
-	const parents = {
-		g1: {
-			name1: 'Myriam Joaquim',
-			name2: 'Joaquim Caingona',
-			name3: 'Myriam Cassange Joaquim',
-			name4: 'Joaquim Bernardo Caingona'
-		},
-		g2: {
-			name1: 'Rita e Amélia Teixeira',
-			name2: 'Carlos e José Trindade',
-			name3: 'Rita Teixeira/Amélia Teixeira',
-			name4: 'Carlos Trindade/José Trindade'
+	onMount(() => {
+		if (form?.error != undefined) {
+			showExtraInfo = false;
 		}
-	};
-	const inviteMessage = 'Convidam para a celebração de matrimóniodos seus filhos';
-	const mainText = 'Cavulamine e José';
-	const monthYear = 'Setembro 2024';
-	const dayNumber = 21;
-	const dayName = 'Sábado';
-	const hour = 'às 16h00';
-	const bottomText = `“Deus mudou o teu caminho até juntares com o meu e guardou a tua vida 
-parando-a para mim.
-Para onde fores, irei, onde tu repousares, repousarei. Teu Deus será o meu 
-Deus. Teu caminho o meu será” 
-
-`;
-	const bottomTextOrigin = '- Rute 1: 16-1';
-
-	function verifyUser() {
-		let all: any;
-		try {
-			//		all = findUser();
-			console.log({ all });
-		} catch (err) {
-			console.log({ err });
+		if (form?.success) {
+			showSuccessMessage = true;
+			setTimeout(() => {
+				showSuccessMessage = false;
+			}, 3000);
 		}
-	}
-
-	onMount(verifyUser);
+	});
 </script>
 
 <div class="app-container relative flex flex-col items-center justify-center gap-4 w-full h-screen">
-	<h1 class="text-2xl font-bold text-opacity-70 text-center m-4">
-		<a href="convidados" class="link">ver convidados</a>
+	{@render SuccessMessage(showSuccessMessage)}
+	<h1 class="text-2xl font-bold text-opacity-70 text-center m-4 flex gap-4 items-center">
+		<a href="/convidados" class="btn btn-square border-2 border-base-300">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="16"
+				height="16"
+				fill="currentColor"
+				class="bi bi-arrow-left-circle w-6 h-6"
+				viewBox="0 0 16 16"
+			>
+				<path
+					fill-rule="evenodd"
+					d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"
+				/>
+			</svg>
+		</a>
+		<span>Confirme a sua presença!</span>
 	</h1>
 
 	<div
@@ -71,40 +61,40 @@ Deus. Teu caminho o meu será”
 		<div class="inner-container border flex flex-col w-full h-full">
 			<section class="parents flex gap-4 justify-between mt-12 px-2">
 				<div class="group1">
-					<p>{parents.g1.name1}</p>
-					<p>{parents.g1.name2}</p>
+					<p>{inviteStore.parents.g1.name1}</p>
+					<p>{inviteStore.parents.g1.name2}</p>
 				</div>
 				<div class="group1 text-right">
-					<p>{parents.g2.name1}</p>
-					<p>{parents.g2.name2}</p>
+					<p>{inviteStore.parents.g2.name1}</p>
+					<p>{inviteStore.parents.g2.name2}</p>
 				</div>
 			</section>
 
 			<section class="invite-message text-center mt-8 flex flex-col items-center justify-center">
-				<p class="max-w-72">{inviteMessage}</p>
+				<p class="max-w-72">{inviteStore.inviteMessage}</p>
 			</section>
 
 			<section class="main-text mt-12 text-7xl text-center">
-				<p>{mainText}</p>
+				<p>{inviteStore.mainText}</p>
 			</section>
 
 			<section
 				class="date text-xl font-bold flex flex-col justify-center items-center text-center mt-12 text-accent"
 			>
-				<p>{monthYear}</p>
-				<p class="pr-3 pt-2">{dayNumber}</p>
+				<p>{inviteStore.monthYear}</p>
+				<p class="pr-3 pt-2">{inviteStore.dayNumber}</p>
 				<div class="flex p-4 w-fit">
-					<p class="pr-8 py-1">{dayName}</p>
-					<p class="pl-8 py-1 border-l-4 border-dotted border-accent">{hour}</p>
+					<p class="pr-8 py-1">{inviteStore.dayName}</p>
+					<p class="pl-8 py-1 border-l-4 border-dotted border-accent">{inviteStore.hour}</p>
 				</div>
 			</section>
 
 			<section class="bottom-text text-center flex flex-col items-center mt-10">
 				<p class="italic max-w-96">
-					{bottomText}
+					{inviteStore.bottomText}
 				</p>
 				<p>
-					{bottomTextOrigin}
+					{inviteStore.bottomTextOrigin}
 				</p>
 			</section>
 		</div>
@@ -137,7 +127,7 @@ Deus. Teu caminho o meu será”
 		<dialog id="info-modal" class="modal modal-open">
 			<div class="modal-box p-0">
 				<div class="p-4 flex justify-between gap-4 items-center border-b">
-					<p>Detalhes</p>
+					<p>confirmar presença</p>
 					<button
 						onclick={() => (showExtraInfo = false)}
 						class="btn btn-sm btn-circle btn-error hover:scale-95">X</button
@@ -145,7 +135,48 @@ Deus. Teu caminho o meu será”
 				</div>
 
 				<div class="content p-4">
-					<p class="text-justify">Localização abaixo, basta clicar para abrir no google maps</p>
+					<!--
+					{@render FormErrorMessage()}
+-->
+					<form method="POST" class="flex gap-4 items-center">
+						<div class="px-4 border-r w-full">
+							<div class="form-control">
+								<label class="label cursor-pointer justify-start gap-4">
+									<input
+										type="radio"
+										name="confirmed"
+										class="radio checked:bg-success"
+										checked={true}
+										value={true}
+									/>
+									<span class="label-text">Confirmo</span>
+								</label>
+							</div>
+
+							<div class="form-control">
+								<label class="label cursor-pointer justify-start gap-4">
+									<input
+										type="radio"
+										value={false}
+										name="confirmed"
+										class="radio checked:bg-red-500"
+									/>
+									<span class="label-text">Não consigo</span>
+								</label>
+							</div>
+
+							<!--
+							<input
+								name="password"
+								type="text"
+								placeholder="Palavra passe"
+								class="input input-bordered w-full max-w-xs"
+							/>
+							-->
+						</div>
+						<button class="btn border-2 border-success hover:btn-success">Salvar</button>
+					</form>
+
 					<div class="divider"></div>
 
 					<iframe
@@ -160,6 +191,22 @@ Deus. Teu caminho o meu será”
 				</div>
 			</div>
 		</dialog>
+	{/if}
+{/snippet}
+
+{#snippet FormErrorMessage()}
+	{#if form?.error}
+		<div role="alert" class="alert alert-error py-2">
+			<span>{form.error}</span>
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet SuccessMessage(show)}
+	{#if show && form?.success}
+		<div role="alert" class="alert alert-success py-2 fixed">
+			<span>{form.success}</span>
+		</div>
 	{/if}
 {/snippet}
 
