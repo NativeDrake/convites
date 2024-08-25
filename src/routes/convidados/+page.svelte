@@ -21,8 +21,6 @@
 	onMount(() => {
 		console.log(data);
 		users = data.users;
-		users = new Array(10).fill(0).map((i, index) => data.users[i]);
-		users.unshift(...data.users);
 	});
 </script>
 
