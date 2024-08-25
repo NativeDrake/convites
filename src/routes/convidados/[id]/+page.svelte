@@ -93,7 +93,7 @@
 				<p class="max-w-72">{inviteStore.inviteMessage}</p>
 			</section>
 
-			<section class="main-text-font mt-12 text-7xl text-center">
+			<section class="main-text-font mt-12 text-5xl sm:text-7xl text-center">
 				<p>{inviteStore.mainText}</p>
 			</section>
 

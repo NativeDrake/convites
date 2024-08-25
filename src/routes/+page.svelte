@@ -84,7 +84,7 @@ Deus. Teu caminho o meu será”
 				<p class="max-w-72">{inviteMessage}</p>
 			</section>
 
-			<section class="main-text mt-12 text-7xl text-center">
+			<section class="main-text mt-12 text-5xl sm:text-7xl text-center">
 				<p>{mainText}</p>
 			</section>
 
