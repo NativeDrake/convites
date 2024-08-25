@@ -168,6 +168,6 @@ Deus. Teu caminho o meu será”
 		font-family: 'Great Vibes';
 	}
 	.date {
-		/* font-family: 'Inria Serif'; */
+		font-family: 'Inria Serif';
 	}
 </style>

@@ -10,7 +10,8 @@ export default {
 			{
 				lofi: {
 					...require('daisyui/src/theming/themes')['lofi'],
-					accent: '#675d50'
+					accent: '#675d50',
+					success: '#10b981'
 				}
 			}
 		]

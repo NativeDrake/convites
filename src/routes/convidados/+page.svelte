@@ -1,5 +1,6 @@
 <script lang="ts">
-	//import { findUser } from '$lib/db';
+	import Presence from '$lib/components/Presence.svelte';
+
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -7,6 +8,15 @@
 	let filter = $state<string>('');
 
 	let filtered = $derived(users.filter((u) => u.fullName.includes(filter)));
+
+	let selectedUser = $state();
+	function selectUser(user: any) {
+		selectedUser = user;
+		console.log(user.id);
+	}
+	function clearSelectedUser() {
+		selectedUser = undefined;
+	}
 
 	onMount(() => {
 		console.log(data);
@@ -17,9 +27,9 @@
 </script>
 
 <div class="app-container relative flex flex-col items-center justify-center gap-4 w-full h-screen">
-	<h1 class="text-2xl font-bold text-opacity-70 text-center p-4 w-full">
+	<header class="text-2xl font-bold text-opacity-70 text-center w-full max-w-[600px]">
 		<div class="flex gap-4 justify-left items-center">
-			<a href="/" class="btn btn-square">
+			<a href="/" class="btn btn-square border-base-300">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="16"
@@ -34,7 +44,7 @@
 				</svg>
 			</a>
 			<span class=""> Convidados </span>
-			<span class="text-success">({users.length})</span>
+			<span class="">({users.length})</span>
 		</div>
 
 		<label class="input input-bordered flex items-center gap-2 mt-4">
@@ -52,7 +62,7 @@
 				/>
 			</svg>
 		</label>
-	</h1>
+	</header>
 
 	<div
 		class="invite-container p-8 w-full h-full max-w-[600px] sm:max-h-[750px] border-2 shadow relative overflow-hidden"
@@ -65,27 +75,33 @@
 						<tr>
 							<th class="p-2">Nome</th>
 							<th>Confirmado</th>
+							<th class="hidden"></th>
 						</tr>
 					</thead>
 					<tbody>
 						<!-- row 1 -->
 						{#each filtered as user}
-							<tr>
-								<td>
-									<a href="convidados/{user.id}" class="font-medium">{user.fullName}</a>
-									{#if user.canPair}
-										<p class="font-sm">Par: {user.pair ?? 'Sem par'}</p>
+							<tr class="hover">
+								<td class="py-4">
+									<a href="convidados/{user.id}" class="link font-bold">{user.fullName}</a>
+									{#if user.par}
+										<p class="font-sm">Par: {user.pair}</p>
 									{/if}
 								</td>
-								<td class="font-bold">
-									{#if user.confirmed === 'confirmed'}
-										<span class="text-success"> Sim </span>
-									{:else if user.confirmed === 'unconfirmed'}
-										<span class="text-error"> Não </span>
+								<td class="">
+									{#if user.confirmed === null}
+										<span class="text-error"> Por confirmar</span>
+									{:else if user.confirmed}
+										<span class="text-success"> Confirmado :D</span>
 									{:else}
-										<span class="text-warning">Indisponível </span>
+										<span class="text-error">Indisponível :(</span>
 									{/if}
 								</td>
+								<td class="hidden"
+									><button onclick={() => selectUser(user)} class="btn btn-link font-light"
+										>alterar</button
+									></td
+								>
 							</tr>
 						{/each}
 					</tbody>
@@ -94,3 +110,24 @@
 		</div>
 	</div>
 </div>
+<!---->
+<!-- {#if selectedUser != undefined} -->
+<!-- 	{@render ConfirmPresenceModal(selectedUser)} -->
+<!-- {/if} -->
+<!---->
+{#snippet ConfirmPresenceModal(user)}
+	<dialog id="presence-modal" class="modal modal-open">
+		<div class="modal-box p-0">
+			<div class="p-4 flex justify-between gap-4 items-center border-b">
+				<p>confirmar presença</p>
+				<button onclick={clearSelectedUser} class="btn btn-sm btn-circle btn-error hover:scale-95"
+					>X</button
+				>
+			</div>
+
+			<div class="content p-4">
+				<!-- <Presence {user}></Presence> -->
+			</div>
+		</div>
+	</dialog>
+{/snippet}

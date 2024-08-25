@@ -1,44 +1,31 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import { boolean, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { DATABASE_URL, BASE_PASS } from '$env/static/private';
 import { eq } from 'drizzle-orm';
+import * as schema from './schema';
 
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  fullName: text('fullName'),
-  confirmed: text('confirmed'),
-  canPair: boolean('canPair'),
-  pair: text('pair'),
-  from: text('from')
-});
-
-export type User = typeof users.$inferSelect
+export type User = typeof schema.users.$inferSelect
 
 // DBSettings
 const connectionString = DATABASE_URL
 const client = postgres(connectionString, { prepare: false })
-const db = drizzle(client);
+const db = drizzle(client, { schema });
 
-export function allUsers(pass: string) {
-  if (!verifyPass(pass)) throw 'Password incorrecta'
-  return db.select().from(users).execute();
+export function allUsers() {
+  return db.select().from(schema.users).execute();
 }
 
-export const fetchUser = (name: string, pass: string) => {
-  if (!verifyPass(pass)) throw 'Password incorrecta'
-  db.select().from(users);
+export const fetchUser = (userId: number) => {
+  return db.query.users.findFirst({ where: (user, { eq }) => eq(user.id, userId) })
 }
 
-export const createUser = (user: User, pass: string) => {
-  if (!verifyPass(pass)) throw 'Password incorrecta'
+export const createUser = (user: User) => {
 
-  return db.insert(users).values(user);
+  return db.insert(schema.users).values(user);
 }
 
-export const updateUser = (id: number, user: Partial<User>, pass: string) => {
-  if (!verifyPass(pass)) throw 'Password incorrecta'
-  return db.update(users).set(user).where(eq(users.id, id)).execute()
+export const updateUser = (id: number, user: Partial<User>) => {
+  return db.update(schema.users).set(user).where(eq(schema.users.id, id)).execute()
 }
 
 // Clumsy veryfication

@@ -1,3 +1,4 @@
+import { SvelteSet } from "svelte/reactivity"
 
 export const inviteStore = $state({
 	parents: {
@@ -14,7 +15,7 @@ export const inviteStore = $state({
 			name4: 'Carlos Trindade/José Trindade'
 		}
 	},
-	inviteMessage: 'Convidam para a celebração de matrimóniodos seus filhos',
+	inviteMessage: 'Convidam para a celebração de matrimónio dos seus filhos',
 	mainText: 'Cavulamine e José',
 	monthYear: 'Setembro 2024',
 	dayNumber: 21,
@@ -30,3 +31,22 @@ Deus. Teu caminho o meu será”
 
 
 })
+
+export const notificationStore = createNotificationStore()
+
+type Notification = { message: string, type: 'error' | 'success' }
+function createNotificationStore() {
+	let notifications = $state<SvelteSet<Notification>>(new SvelteSet([]))
+
+
+	return {
+		items: notifications,
+		add: (notification: Notification) => {
+			notifications.add(notification);
+			setTimeout(() => {
+				notifications.delete(notification)
+				console.log(notifications)
+			}, 5000)
+		}
+	}
+}
